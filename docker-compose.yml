@@ -1,0 +1,32 @@
+# This is a Docker Compose file for local development.
+version: '3'
+ 
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    command: >
+      sh -c "python3 manage.py wait_for_db &&
+             python3 manage.py migrate &&
+             gunicorn ticketapi.wsgi:application --bind 0.0.0.0:8000"
+    environment:
+      - DB_HOST=db
+      - DB_NAME=ticketapi
+      - DB_USER=postgres
+      - DB_PASS=$POSTGRES_PASS
+    depends_on:
+      - db
+             
+  db:
+    image: postgres:13-alpine
+    environment:
+      - POSTGRES_DB=ticketapi
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=$POSTGRES_PASS
+    volumes: 
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
