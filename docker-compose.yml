@@ -16,6 +16,7 @@ services:
       - DB_NAME=ticketapi
       - DB_USER=postgres
       - DB_PASS=$POSTGRES_PASS
+      - DEBUG=1
     depends_on:
       - db
              
