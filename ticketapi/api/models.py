@@ -37,6 +37,7 @@ class Event(models.Model):
     name = models.CharField(max_length=400)
     details = models.TextField()
     location = models.ForeignKey(Location, on_delete=models.PROTECT)
+    date = models.DateTimeField()
     reservation_constraint = models.CharField(
         max_length=2, choices=ReservationConstraint.choices, default=ReservationConstraint.NONE)
 
@@ -49,7 +50,6 @@ class Reservation(models.Model):
     user = models.ForeignKey(User, on_delete=models.PROTECT)
     reservation_time = models.DateTimeField(auto_now_add=True)
     is_paid = models.BooleanField(default=False)
-    date = models.DateTimeField()
 
     def __str__(self):
         ticket_count = Ticket.objects.filter(pk=self.pk).count()

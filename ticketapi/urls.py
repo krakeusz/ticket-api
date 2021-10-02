@@ -13,9 +13,30 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from rest_framework.schemas import get_schema_view
+from rest_framework.routers import DefaultRouter
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
+from django.views.generic import TemplateView
+import ticketapi.api.views as views
+
+
+public_router = DefaultRouter()
+public_router.register(r'events', views.EventViewSet)
 
 urlpatterns = [
+    path('', views.root, name='root'),
     path('admin/', admin.site.urls),
+    path('api/', include(public_router.urls)),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('openapi/', get_schema_view(
+        title="Ticket API",
+        description="API for making reservations for events",
+        version="1.0.0",
+        public=True,
+    ), name='openapi-schema'),
+    path('docs/', TemplateView.as_view(
+        template_name='api/swagger-ui.html',
+        extra_context={'schema_url': 'openapi-schema'}
+    ), name='swagger-ui'),
 ]
