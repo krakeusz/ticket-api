@@ -18,11 +18,13 @@ from rest_framework.routers import DefaultRouter
 from django.contrib import admin
 from django.urls import include, path
 from django.views.generic import TemplateView
+import debug_toolbar
 import ticketapi.api.views as views
 
 
 public_router = DefaultRouter()
 public_router.register(r'events', views.EventViewSet)
+public_router.register(r'events', views.EventDetailsViewSet)
 
 urlpatterns = [
     path('', views.root, name='root'),
@@ -39,4 +41,5 @@ urlpatterns = [
         template_name='api/swagger-ui.html',
         extra_context={'schema_url': 'openapi-schema'}
     ), name='swagger-ui'),
+    path('__debug__/', include(debug_toolbar.urls)),
 ]

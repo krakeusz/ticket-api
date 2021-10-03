@@ -13,13 +13,26 @@ class LocationSerializer(serializers.ModelSerializer):
         fields = ['name', 'address']
 
 
-class EventSerializer(serializers.HyperlinkedModelSerializer):
+class EventSimpleSerializer(serializers.HyperlinkedModelSerializer):
     location = LocationSerializer()
-    remaining_seats = serializers.SerializerMethodField()
 
     class Meta:
         model = Event
         fields = ['url', 'name', 'date', 'details',
+                  'location', 'reservation_constraint', 'pk']
+        extra_kwargs = {
+            'url': {
+                'view_name': 'event-detail'
+            }
+        }
+
+
+class EventDetailSerializer(EventSimpleSerializer):
+    remaining_seats = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Event
+        fields = ['name', 'date', 'details',
                   'location', 'reservation_constraint', 'remaining_seats', 'pk']
 
     def get_remaining_seats(self, obj):
